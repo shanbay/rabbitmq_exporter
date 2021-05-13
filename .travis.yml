@@ -27,14 +27,11 @@ install:
 
 script:
   - go test -tags integration -covermode=count -coverprofile=coverage.out ./
-  
-jobs:
-  include:
-    - # require the branch name to be master (note for PRs this is the base branch name)
-      if: branch = main
-      script:
-      #Build dist releases 
-        - if [ -n "$TRAVIS_TAG" ]; then make tarballs && promu release .tarballs ; fi
-        
-      #Submit coverage
-        - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
+
+  - |
+    if [ $TRAVIS_BRANCH == "main" && $TRAVIS_PULL_REQUEST == "false" ]; then
+      if [ -n "$TRAVIS_TAG" ]; then 
+        make tarballs && promu release .tarballs;
+      fi
+      goveralls -coverprofile=coverage.out
+    fi
