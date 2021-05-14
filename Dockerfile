@@ -7,6 +7,8 @@ ARG VERSION=""
 ARG BRANCH=""
 ARG COMMIT=""
 
+RUN go env -w GO111MODULE=on
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 
 # Create the user and group files that will be used in the running container to
 # run the process as an unprivileged user.
