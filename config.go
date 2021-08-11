@@ -33,6 +33,10 @@ var (
 		AlivenessVhost:     "/",
 		EnabledExporters:   []string{"exchange", "node", "overview", "queue"},
 		AlivenessReqTime:   1000,
+		InstanceIds:        []string{"xxxxxxxxxx"},
+		RegionId:           "cn_hangzhou",
+		AliAccessKey:       "ali_access_key",
+		AliAccessSecret:    "ali_access_secret",
 		Timeout:            30,
 		MaxQueues:          0,
 	}
@@ -63,6 +67,10 @@ type rabbitExporterConfig struct {
 	AlivenessVhost           string              `json:"aliveness_vhost"`
 	EnabledExporters         []string            `json:"enabled_exporters"`
 	AlivenessReqTime         int64               `json:"aliveness_req_time"`
+	InstanceIds              []string            `json:"instance_ids"`
+	RegionId                 string              `json:"region_id"`
+	AliAccessKey             string              `json:"ali_access_key"`
+	AliAccessSecret          string              `json:"ali_access_secret"`
 	Timeout                  int                 `json:"timeout"`
 	MaxQueues                int                 `json:"max_queues"`
 }
@@ -205,7 +213,18 @@ func initConfig() {
 
 	if alivenessReqTime := os.Getenv("ALIVENESS_REQ_TIME"); alivenessReqTime != "" {
 		config.AlivenessReqTime, _ = strconv.ParseInt(alivenessReqTime, 10, 64)
+	}
 
+	if regionId := os.Getenv("REGION_ID"); regionId != "" {
+		config.RegionId = regionId
+	}
+
+	if aliAccessKey := os.Getenv("ALI_ACCESS_KEY"); aliAccessKey != "" {
+		config.AliAccessKey = aliAccessKey
+	}
+
+	if aliAccessSecret := os.Getenv("ALI_ACCESS_SECRET"); aliAccessSecret != "" {
+		config.AliAccessSecret = aliAccessSecret
 	}
 
 	if timeout := os.Getenv("RABBIT_TIMEOUT"); timeout != "" {

@@ -1,6 +1,7 @@
 module github.com/kbudde/rabbitmq_exporter
 
 require (
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1203
 	github.com/containerd/continuity v0.0.0-20200413184840-d3ef23f19fbb // indirect
 	github.com/kbudde/gobert v0.0.0-20180309235759-77f4c9cb2e7e
 	github.com/kylelemons/godebug v1.1.0
