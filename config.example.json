@@ -18,6 +18,7 @@
     "aliveness_vhost": "/",
     "enabled_exporters": [
             "exchange",
+            "connections",
             "node",
             "overview",
             "queue",
