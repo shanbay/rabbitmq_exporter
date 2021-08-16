@@ -24,6 +24,7 @@
             "queue",
             "aliveness"
     ],
+    "aliveness_req_time": 1000,
     "timeout": 30,
     "max_queues": 0
 }

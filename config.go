@@ -32,6 +32,7 @@ var (
 		RabbitCapabilities: parseCapabilities("no_sort,bert"),
 		AlivenessVhost:     "/",
 		EnabledExporters:   []string{"exchange", "node", "overview", "queue"},
+		AlivenessReqTime:   1000,
 		Timeout:            30,
 		MaxQueues:          0,
 	}
@@ -61,6 +62,7 @@ type rabbitExporterConfig struct {
 	RabbitCapabilities       rabbitCapabilitySet `json:"-"`
 	AlivenessVhost           string              `json:"aliveness_vhost"`
 	EnabledExporters         []string            `json:"enabled_exporters"`
+	AlivenessReqTime         int64               `json:"aliveness_req_time"`
 	Timeout                  int                 `json:"timeout"`
 	MaxQueues                int                 `json:"max_queues"`
 }
@@ -199,6 +201,11 @@ func initConfig() {
 
 	if alivenessVhost := os.Getenv("ALIVENESS_VHOST"); alivenessVhost != "" {
 		config.AlivenessVhost = alivenessVhost
+	}
+
+	if alivenessReqTime := os.Getenv("ALIVENESS_REQ_TIME"); alivenessReqTime != "" {
+		config.AlivenessReqTime, _ = strconv.ParseInt(alivenessReqTime, 10, 64)
+
 	}
 
 	if timeout := os.Getenv("RABBIT_TIMEOUT"); timeout != "" {
