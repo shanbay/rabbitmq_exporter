@@ -17,11 +17,12 @@
     "rabbit_capabilities": "no_sort,bert",
     "aliveness_vhost": "/",
     "enabled_exporters": [
-        "exchange",
-        "node",
-        "overview",
-        "queue",
-        "aliveness"
+            "exchange",
+            "connections",
+            "node",
+            "overview",
+            "queue",
+            "aliveness"
     ],
     "aliveness_req_time": 1000,
     "timeout": 30,
