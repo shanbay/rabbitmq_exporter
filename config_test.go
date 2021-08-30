@@ -152,7 +152,7 @@ func TestConfig_Capabilities(t *testing.T) {
 		t.Error("No_sort support should be enabled by default")
 	}
 
-	var needToSupport = []rabbitCapability{"no_sort", "bert"}
+	needToSupport := []rabbitCapability{"no_sort", "bert"}
 	for _, cap := range needToSupport {
 		os.Setenv("RABBIT_CAPABILITIES", "junk_cap, another_with_spaces_around ,  "+string(cap)+", done")
 		initConfig()
@@ -161,7 +161,7 @@ func TestConfig_Capabilities(t *testing.T) {
 			t.Errorf("Capability '%s' wasn't properly detected from env", cap)
 		}
 	}
-	//disable all capabilities
+	// disable all capabilities
 	os.Setenv("RABBIT_CAPABILITIES", " ")
 	initConfig()
 	expected := rabbitCapabilitySet{}

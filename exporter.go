@@ -24,7 +24,7 @@ const (
 	totalQueues            contextValues = "totalQueues"
 )
 
-//RegisterExporter makes an exporter available by the provided name.
+// RegisterExporter makes an exporter available by the provided name.
 func RegisterExporter(name string, f func() Exporter) {
 	exportersMu.Lock()
 	defer exportersMu.Unlock()
@@ -45,7 +45,7 @@ type exporter struct {
 	lastScrapeOK                 bool
 }
 
-//Exporter interface for prometheus metrics. Collect is fetching the data and therefore can return an error
+// Exporter interface for prometheus metrics. Collect is fetching the data and therefore can return an error
 type Exporter interface {
 	Collect(ctx context.Context, ch chan<- prometheus.Metric) error
 	Describe(ch chan<- *prometheus.Desc)
@@ -65,7 +65,7 @@ func newExporter() *exporter {
 		endpointScrapeDurationMetric: newGaugeVec("module_scrape_duration_seconds", "Duration of the last scrape in seconds", []string{"cluster", "node", "module"}),
 		exporter:                     enabledExporter,
 		overviewExporter:             newExporterOverview(),
-		lastScrapeOK:                 true, //return true after start. Value will be updated with each scraping
+		lastScrapeOK:                 true, // return true after start. Value will be updated with each scraping
 	}
 }
 
@@ -76,7 +76,6 @@ func (e *exporter) LastScrapeOK() bool {
 }
 
 func (e *exporter) Describe(ch chan<- *prometheus.Desc) {
-
 	e.overviewExporter.Describe(ch)
 	for _, ex := range e.exporter {
 		ex.Describe(ch)
@@ -127,14 +126,13 @@ func (e *exporter) Collect(ch chan<- prometheus.Metric) {
 	e.endpointUpMetric.Collect(ch)
 	e.endpointScrapeDurationMetric.Collect(ch)
 	log.WithField("duration", time.Since(start)).Info("Metrics updated")
-
 }
 
 func (e *exporter) collectWithDuration(ex Exporter, name string, ch chan<- prometheus.Metric) error {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, endpointScrapeDuration, e.endpointScrapeDurationMetric)
 	ctx = context.WithValue(ctx, endpointUpMetric, e.endpointUpMetric)
-	//use last know value, could be outdated or empty
+	// use last know value, could be outdated or empty
 	ctx = context.WithValue(ctx, nodeName, e.overviewExporter.NodeInfo().Node)
 	ctx = context.WithValue(ctx, clusterName, e.overviewExporter.NodeInfo().ClusterName)
 	ctx = context.WithValue(ctx, totalQueues, e.overviewExporter.NodeInfo().TotalQueues)
@@ -142,12 +140,12 @@ func (e *exporter) collectWithDuration(ex Exporter, name string, ch chan<- prome
 	startModule := time.Now()
 	err := ex.Collect(ctx, ch)
 
-	//use current data
+	// use current data
 	node := e.overviewExporter.NodeInfo().Node
 	cluster := e.overviewExporter.NodeInfo().ClusterName
 
 	if scrapeDuration, ok := ctx.Value(endpointScrapeDuration).(*prometheus.GaugeVec); ok {
-		if cluster != "" && node != "" { //values are not available until first scrape of overview succeeded
+		if cluster != "" && node != "" { // values are not available until first scrape of overview succeeded
 			scrapeDuration.WithLabelValues(cluster, node, name).Set(time.Since(startModule).Seconds())
 		}
 	}

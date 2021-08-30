@@ -101,14 +101,14 @@ func iterateBertKV(obj interface{}, elemFunc func(string, interface{}) bool) err
 // MetricMap.
 func parseSingleStatsObject(obj interface{}, labels []string) (*StatsInfo, bool) {
 	var result StatsInfo
-	var objectOk = true
+	objectOk := true
 	result.metrics = make(MetricMap)
 	result.labels = make(map[string]string)
 	for _, label := range labels {
 		result.labels[label] = ""
 	}
 	err := iterateBertKV(obj, func(key string, value interface{}) bool {
-		//Check if current key should be saved as label
+		// Check if current key should be saved as label
 		for _, label := range labels {
 			if key == label {
 				tmp, ok := parseBertStringy(value)
@@ -124,7 +124,7 @@ func parseSingleStatsObject(obj interface{}, labels []string) (*StatsInfo, bool)
 		arr, isSlice := assertBertSlice(value)
 		_, iSPropList := assertBertProplistPairs(value)
 
-		//save metrics for array length.
+		// save metrics for array length.
 		// An array is a slice which is not a proplist.
 		// Arrays with len()==0 are special. IsProplist is true
 		if isSlice && (!iSPropList || len(arr) == 0) {
@@ -323,7 +323,7 @@ func (rep *rabbitBERTReply) GetString(label string) (string, bool) {
 	result = false
 
 	iterateBertKV(rep.objects, func(key string, value interface{}) bool {
-		//Check if current key should be saved as label
+		// Check if current key should be saved as label
 
 		if key == label {
 			tmp, ok := parseBertStringy(value)

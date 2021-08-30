@@ -11,9 +11,9 @@ func init() {
 }
 
 var (
-	//shovelLabels are the labels for all shovel mertrics
+	// shovelLabels are the labels for all shovel mertrics
 	shovelLabels = []string{"cluster", "vhost", "shovel", "type", "self", "state"}
-	//shovelLabelKeys are the important keys to be extracted from json
+	// shovelLabelKeys are the important keys to be extracted from json
 	shovelLabelKeys = []string{"vhost", "name", "type", "node", "state"}
 )
 

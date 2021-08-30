@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	//RegisterExporter("overview", newExporterOverview)
+	// RegisterExporter("overview", newExporterOverview)
 }
 
 var (
@@ -39,7 +39,7 @@ type exporterOverview struct {
 	nodeInfo        NodeInfo
 }
 
-//NodeInfo presents the name and version of fetched rabbitmq
+// NodeInfo presents the name and version of fetched rabbitmq
 type NodeInfo struct {
 	Node            string
 	RabbitmqVersion string
@@ -114,5 +114,4 @@ func (e exporterOverview) Describe(ch chan<- *prometheus.Desc) {
 	for _, gauge := range e.overviewMetrics {
 		gauge.Describe(ch)
 	}
-
 }

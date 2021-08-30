@@ -56,7 +56,6 @@ func setupServer(t *testing.T, overview, queues, exchange, nodes, connections st
 			t.Errorf("Invalid request. URI=%v", r.RequestURI)
 			fmt.Fprintf(w, "Invalid request. URI=%v", r.RequestURI)
 		}
-
 	}))
 	return server
 }
@@ -236,13 +235,13 @@ func TestRabbitError(t *testing.T) {
 	}
 	body := w.Body.String()
 
-	expectSubstring(t, body, `rabbitmq_up{cluster="",node=""} 0`) //Values cannot be loaded, it is still exported
+	expectSubstring(t, body, `rabbitmq_up{cluster="",node=""} 0`) // Values cannot be loaded, it is still exported
 	if strings.Contains(body, "rabbitmq_channelsTotal") {
 		t.Errorf("Metric 'rabbitmq_channelsTotal' unexpected as the server  did not respond")
 	}
 }
 
-//TestResetMetricsOnRabbitFailure verifies the behaviour of the exporter if the rabbitmq fails after one successfull retrieval of the data
+// TestResetMetricsOnRabbitFailure verifies the behaviour of the exporter if the rabbitmq fails after one successfull retrieval of the data
 // List of metrics should be empty except rabbitmq_up{cluster="my-rabbit@ae74c041248b",node="my-rabbit@ae74c041248b"} should be 0
 func TestResetMetricsOnRabbitFailure(t *testing.T) {
 	rabbitUP := true
@@ -274,7 +273,6 @@ func TestResetMetricsOnRabbitFailure(t *testing.T) {
 			t.Errorf("Invalid request. URI=%v", r.RequestURI)
 			fmt.Fprintf(w, "Invalid request. URI=%v", r.RequestURI)
 		}
-
 	}))
 	defer server.Close()
 	os.Setenv("RABBIT_URL", server.URL)
@@ -348,7 +346,7 @@ func TestResetMetricsOnRabbitFailure(t *testing.T) {
 		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="exchange",node="my-rabbit@ae74c041248b"} 1`)
 		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="node",node="my-rabbit@ae74c041248b"} 1`)
 		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="overview",node="my-rabbit@ae74c041248b"} 1`)
-		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="queue",node="my-rabbit@ae74c041248b"} 0`) //down
+		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="queue",node="my-rabbit@ae74c041248b"} 0`) // down
 		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="connections",node="my-rabbit@ae74c041248b"} 1`)
 
 		// overview
@@ -419,7 +417,6 @@ func TestResetMetricsOnRabbitFailure(t *testing.T) {
 		dontExpectSubstring(t, body, `rabbitmq_connection_channels{cluster="my-rabbit@ae74c041248b",node="rabbit@rmq-cluster-node-04",peer_host="172.31.0.130",self="1",user="rmq_oms",vhost="/"}`)
 		dontExpectSubstring(t, body, `rabbitmq_connection_received_packets{cluster="my-rabbit@ae74c041248b",node="rabbit@rmq-cluster-node-04",peer_host="172.31.0.130",self="1",user="rmq_oms",vhost="/"}`)
 	})
-
 }
 
 func TestQueueState(t *testing.T) {
@@ -456,7 +453,6 @@ func TestQueueState(t *testing.T) {
 	// connections
 	expectSubstring(t, body, `rabbitmq_connection_status{cluster="my-rabbit@ae74c041248b",node="rabbit@rmq-cluster-node-04",peer_host="172.31.0.130",self="0",state="running",user="rmq_oms",vhost="/"} 1`)
 	expectSubstring(t, body, `rabbitmq_connection_status{cluster="my-rabbit@ae74c041248b",node="my-rabbit@ae74c041248b",peer_host="172.31.0.130",self="1",state="running",user="rmq_oms",vhost="/"} 1`)
-
 }
 
 func TestQueueLength(t *testing.T) {
@@ -491,7 +487,6 @@ func TestQueueLength(t *testing.T) {
 	// queue
 	expectSubstring(t, body, `rabbitmq_queue_max_length{cluster="my-rabbit@ae74c041248b",durable="true",policy="",queue="QueueWithMaxLength55",self="1",vhost="/"} 55`)
 	expectSubstring(t, body, `rabbitmq_queue_max_length_bytes{cluster="my-rabbit@ae74c041248b",durable="true",policy="",queue="QueueWithMaxBytes99",self="1",vhost="/"} 99`)
-
 }
 
 func TestShovel(t *testing.T) {
@@ -526,7 +521,6 @@ func TestShovel(t *testing.T) {
 			t.Errorf("Invalid request. URI=%v", r.RequestURI)
 			fmt.Fprintf(w, "Invalid request. URI=%v", r.RequestURI)
 		}
-
 	}))
 	defer server.Close()
 	os.Setenv("RABBIT_URL", server.URL)
@@ -559,7 +553,6 @@ func TestShovel(t *testing.T) {
 		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="shovel",node="my-rabbit@ae74c041248b"} 1`)
 		expectSubstring(t, body, `rabbitmq_shovel_state{cluster="my-rabbit@ae74c041248b",self="0",shovel="test-shovel",state="terminated",type="dynamic",vhost="/"} 1`)
 		expectSubstring(t, body, `rabbitmq_shovel_state{cluster="my-rabbit@ae74c041248b",self="1",shovel="ADMIN-3779-1",state="running",type="dynamic",vhost="/"} 1`)
-
 	})
 
 	t.Run("shovel endpoint down", func(t *testing.T) {
@@ -576,9 +569,7 @@ func TestShovel(t *testing.T) {
 		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="shovel",node="my-rabbit@ae74c041248b"} 0`)
 		dontExpectSubstring(t, body, `rabbitmq_shovel_state{cluster="my-rabbit@ae74c041248b",self="0",shovel="test-shovel",state="terminated",type="dynamic",vhost="/"} 1`)
 		dontExpectSubstring(t, body, `rabbitmq_shovel_state{cluster="my-rabbit@ae74c041248b",self="1",shovel="ADMIN-3779-1",state="running",type="dynamic",vhost="/"} 1`)
-
 	})
-
 }
 
 func TestFederation(t *testing.T) {
@@ -613,7 +604,6 @@ func TestFederation(t *testing.T) {
 			t.Errorf("Invalid request. URI=%v", r.RequestURI)
 			fmt.Fprintf(w, "Invalid request. URI=%v", r.RequestURI)
 		}
-
 	}))
 	defer server.Close()
 	os.Setenv("RABBIT_URL", server.URL)
@@ -647,7 +637,6 @@ func TestFederation(t *testing.T) {
 		expectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="my-rabbit@ae74c041248b",queue="test_queue1",self="1",status="running",vhost="/"} 1`)
 		expectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="rabbit@dc1rbmq1",queue="test_queue2",self="0",status="starting",vhost="/"} 1`)
 		expectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="test_exchange1",node="rabbit@dc1rbmq1",queue="",self="0",status="running",vhost="/"} 1`)
-
 	})
 
 	t.Run("federation endpoint down", func(t *testing.T) {
@@ -665,7 +654,5 @@ func TestFederation(t *testing.T) {
 		dontExpectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="my-rabbit@ae74c041248b",queue="test_queue1",self="0",status="running",vhost="/"} 1`)
 		dontExpectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="rabbit@dc1rbmq1",queue="test_queue2",self="0",status="starting",vhost="/"} 1`)
 		dontExpectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="test_exchange1",node="rabbit@dc1rbmq1",queue="",self="0",status="running",vhost="/"} 1`)
-
 	})
-
 }

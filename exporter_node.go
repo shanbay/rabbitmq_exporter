@@ -62,7 +62,6 @@ func (e exporterNode) Collect(ctx context.Context, ch chan<- prometheus.Metric) 
 	}
 
 	nodeData, err := getStatsInfo(config, "nodes", nodeLabelKeys)
-
 	if err != nil {
 		return err
 	}
