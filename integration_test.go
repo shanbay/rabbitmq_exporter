@@ -5,12 +5,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
 	"testing"
 	"time"
-
-	"regexp"
-
-	"strings"
 
 	"github.com/kbudde/rabbitmq_exporter/testenv"
 )
@@ -128,6 +126,5 @@ func TestQueueCount(t *testing.T) {
 			t.Log(body, search)
 			t.Fatalf("Queue with policy not found")
 		}
-
 	})
 }

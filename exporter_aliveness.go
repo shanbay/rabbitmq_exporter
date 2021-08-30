@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 func init() {
@@ -27,19 +28,17 @@ var (
 		[]string{"status", "error", "reason"},
 	)
 
-	rabbitmqAlivenessReqTimeMetric = prometheus.NewGaugeVec(
+	rabbitmqAlivenessReqTimeMetric = prometheus.NewGauge(
 		prometheus.GaugeOpts{
 			Name: "rabbitmq_aliveness_req_time",
 			Help: "A metric with aliveness_req_time by aliveness_test request time",
 		},
-		[]string{"reqTime"},
 	)
 )
 
 type exporterAliveness struct {
 	alivenessMetrics map[string]*prometheus.GaugeVec
 	alivenessInfo    AlivenessInfo
-	alivenessReqTime AlivenessReqTime
 }
 
 type AlivenessInfo struct {
@@ -48,9 +47,6 @@ type AlivenessInfo struct {
 	Reason string
 }
 
-type AlivenessReqTime struct {
-	ReqTime string
-}
 
 func newExporterAliveness() Exporter {
 	alivenessGaugeVecActual := alivenessGaugeVec
@@ -66,10 +62,8 @@ func newExporterAliveness() Exporter {
 	return &exporterAliveness{
 		alivenessMetrics: alivenessGaugeVecActual,
 		alivenessInfo:    AlivenessInfo{},
-		alivenessReqTime: AlivenessReqTime{},
 	}
 }
-
 
 func (e *exporterAliveness) Collect(ctx context.Context, ch chan<- prometheus.Metric) error {
 	var flag float64 = 0
@@ -84,7 +78,7 @@ func (e *exporterAliveness) Collect(ctx context.Context, ch chan<- prometheus.Me
 		guageCollect(e, ch)
 		return nil
 	}
-	
+
 	reply, err := MakeReply(contentType, body)
 	if err != nil {
 		// 解析响应体出错
@@ -94,10 +88,9 @@ func (e *exporterAliveness) Collect(ctx context.Context, ch chan<- prometheus.Me
 		return nil
 	}
 
-	var requestTime int64 = t2.Sub(t1).Milliseconds()
-	rabbitmqAlivenessReqTimeMetric.Reset()
-	e.alivenessReqTime.ReqTime = string(requestTime)
-	rabbitmqAlivenessReqTimeMetric.WithLabelValues(e.alivenessReqTime.ReqTime).Set(float64(requestTime))
+	var requestTime = t2.Sub(t1).Milliseconds()
+
+	rabbitmqAlivenessReqTimeMetric.Set(float64(requestTime))
 
 	rabbitMqAlivenessData := reply.MakeMap()
 
@@ -110,7 +103,7 @@ func (e *exporterAliveness) Collect(ctx context.Context, ch chan<- prometheus.Me
 	}
 	rabbitmqAlivenessMetric.WithLabelValues(e.alivenessInfo.Status, e.alivenessInfo.Error, e.alivenessInfo.Reason).Set(flag)
 
-	//log.WithField("alivenesswData", rabbitMqAlivenessData).Debug("Aliveness data")
+	// log.WithField("alivenesswData", rabbitMqAlivenessData).Debug("Aliveness data")
 	log.WithField("alivenesswData", e.alivenessInfo).Debug("Aliveness data")
 	for key, gauge := range e.alivenessMetrics {
 		if value, ok := rabbitMqAlivenessData[key]; ok {
@@ -132,7 +125,6 @@ func guageCollect(e *exporterAliveness, ch chan<- prometheus.Metric) {
 		}
 	}
 }
-
 
 func (e exporterAliveness) Describe(ch chan<- *prometheus.Desc) {
 	rabbitmqAlivenessMetric.Describe(ch)

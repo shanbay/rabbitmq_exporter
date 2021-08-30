@@ -13,7 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var client = &http.Client{Timeout: 15 * time.Second} //default client for test. Client is initialized in initClient()
+var client = &http.Client{Timeout: 15 * time.Second} // default client for test. Client is initialized in initClient()
 
 func initClient() {
 	var roots *x509.CertPool
@@ -57,7 +57,6 @@ func initClient() {
 		Transport: tr,
 		Timeout:   time.Duration(config.Timeout) * time.Second,
 	}
-
 }
 
 func apiRequest(config rabbitExporterConfig, endpoint string) ([]byte, string, error) {
@@ -103,7 +102,6 @@ func apiRequest(config rabbitExporterConfig, endpoint string) ([]byte, string, e
 
 func loadMetrics(config rabbitExporterConfig, endpoint string) (RabbitReply, error) {
 	body, content, err := apiRequest(config, endpoint)
-
 	if err != nil {
 		return nil, err
 	}

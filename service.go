@@ -8,7 +8,7 @@ import (
 	"syscall"
 )
 
-//runService wait for os interrupt
+// runService wait for os interrupt
 func runService() chan bool {
 	waitChan := make(chan bool)
 

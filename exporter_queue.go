@@ -33,7 +33,7 @@ var (
 		"consumers":                             newGaugeVec("queue_consumers", "Number of consumers.", queueLabels),
 		"consumer_utilisation":                  newGaugeVec("queue_consumer_utilisation", "Fraction of the time (between 0.0 and 1.0) that the queue is able to immediately deliver messages to consumers. This can be less than 1.0 if consumers are limited by network congestion or prefetch count.", queueLabels),
 		"memory":                                newGaugeVec("queue_memory", "Bytes of memory consumed by the Erlang process associated with the queue, including stack, heap and internal structures.", queueLabels),
-		"head_message_timestamp":                newGaugeVec("queue_head_message_timestamp", "The timestamp property of the first message in the queue, if present. Timestamps of messages only appear when they are in the paged-in state.", queueLabels), //https://github.com/rabbitmq/rabbitmq-server/pull/54
+		"head_message_timestamp":                newGaugeVec("queue_head_message_timestamp", "The timestamp property of the first message in the queue, if present. Timestamps of messages only appear when they are in the paged-in state.", queueLabels), // https://github.com/rabbitmq/rabbitmq-server/pull/54
 		"arguments.x-max-length-bytes":          newGaugeVec("queue_max_length_bytes", "Total body size for ready messages a queue can contain before it starts to drop them from its head.", queueLabels),
 		"arguments.x-max-length":                newGaugeVec("queue_max_length", "How many (ready) messages a queue can contain before it starts to drop them from its head.", queueLabels),
 		"garbage_collection.min_heap_size":      newGaugeVec("queue_gc_min_heap", "Minimum heap size in words", queueLabels),
@@ -123,7 +123,6 @@ func (e exporterQueue) Collect(ctx context.Context, ch chan<- prometheus.Metric)
 	}
 
 	rabbitMqQueueData, err := getStatsInfo(config, "queues", queueLabelKeys)
-
 	if err != nil {
 		return err
 	}
@@ -135,7 +134,6 @@ func (e exporterQueue) Collect(ctx context.Context, ch chan<- prometheus.Metric)
 			vname := queue.labels["vhost"]
 
 			if value, ok := queue.metrics[key]; ok {
-
 				if matchVhost := config.IncludeVHost.MatchString(vname); matchVhost {
 					if skipVhost := config.SkipVHost.MatchString(vname); !skipVhost {
 						if matchInclude := config.IncludeQueues.MatchString(qname); matchInclude {
@@ -181,7 +179,7 @@ func (e exporterQueue) Collect(ctx context.Context, ch chan<- prometheus.Metric)
 			if t, err := time.Parse("2006-01-02 15:04:05", idleSince); err == nil {
 				unixSeconds := float64(t.UnixNano()) / 1e9
 				state := queue.labels["state"]
-				if state == "running" { //replace running state with idle if idle_since time is provided. Other states (flow, etc.) are not replaced
+				if state == "running" { // replace running state with idle if idle_since time is provided. Other states (flow, etc.) are not replaced
 					state = "idle"
 				}
 				e.idleSinceMetric.WithLabelValues(cluster, queue.labels["vhost"], queue.labels["node"], queue.labels["name"], queue.labels["durable"], queue.labels["policy"], self).Set(unixSeconds)

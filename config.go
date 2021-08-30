@@ -19,7 +19,7 @@ var (
 		RabbitPassword:     "guest",
 		PublishPort:        "9419",
 		PublishAddr:        "",
-		OutputFormat:       "TTY", //JSON
+		OutputFormat:       "TTY", // JSON
 		CAFile:             "ca.pem",
 		CertFile:           "client-cert.pem",
 		KeyFile:            "client-key.pem",
@@ -73,8 +73,10 @@ type rabbitExporterConfig struct {
 	MaxQueues                int                 `json:"max_queues"`
 }
 
-type rabbitCapability string
-type rabbitCapabilitySet map[rabbitCapability]bool
+type (
+	rabbitCapability    string
+	rabbitCapabilitySet map[rabbitCapability]bool
+)
 
 const (
 	rabbitCapNoSort rabbitCapability = "no_sort"
@@ -153,7 +155,6 @@ func initConfig() {
 		} else {
 			panic(fmt.Errorf("the configured port is not a valid number: %v", port))
 		}
-
 	}
 
 	if addr := os.Getenv("PUBLISH_ADDR"); addr != "" {

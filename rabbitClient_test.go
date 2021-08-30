@@ -38,7 +38,7 @@ func TestGetMetricMap(t *testing.T) {
 	expect(t, overview["float1"], 1.23456789101112)
 	expect(t, overview["number"], 2.0)
 
-	//Unknown error Server
+	// Unknown error Server
 	errorServer := createTestserver(500, http.StatusText(500))
 	defer errorServer.Close()
 
@@ -74,7 +74,7 @@ func TestQueues(t *testing.T) {
 	expect(t, queues[0].metrics["number"], 2.0)
 	expect(t, queues[1].metrics["number"], 3.0)
 
-	//Unknown error Server
+	// Unknown error Server
 	errorServer := createTestserver(500, http.StatusText(500))
 	defer errorServer.Close()
 
@@ -90,7 +90,6 @@ func TestQueues(t *testing.T) {
 }
 
 func TestExchanges(t *testing.T) {
-
 	// Test server that always responds with 200 code, and specific payload
 	server := createTestserver(200, exchangeAPIResponse)
 	defer server.Close()
@@ -116,7 +115,7 @@ func TestExchanges(t *testing.T) {
 	expect(t, exchanges[8].metrics["message_stats.ack"], 0.0)
 	expect(t, exchanges[8].metrics["message_stats.return_unroutable"], 5.0)
 
-	//Unknown error Server
+	// Unknown error Server
 	errorServer := createTestserver(500, http.StatusText(500))
 	defer errorServer.Close()
 
@@ -151,7 +150,6 @@ func assertNoSortRespected(t *testing.T, enabled bool) {
 			t.Errorf("Invalid request with enabled=%t. URI=%v", enabled, r.RequestURI)
 			fmt.Fprintf(w, "Invalid request. URI=%v", r.RequestURI)
 		}
-
 	}))
 	defer server.Close()
 
