@@ -89,7 +89,6 @@ func (e *exporterAliveness) Collect(ctx context.Context, ch chan<- prometheus.Me
 	}
 
 	var requestTime = t2.Sub(t1).Milliseconds()
-	// e.alivenessReqTime.ReqTime = strconv.FormatInt(requestTime,10)
 
 	rabbitmqAlivenessReqTimeMetric.Set(float64(requestTime))
 
