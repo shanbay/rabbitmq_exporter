@@ -28,19 +28,17 @@ var (
 		[]string{"status", "error", "reason"},
 	)
 
-	rabbitmqAlivenessReqTimeMetric = prometheus.NewGaugeVec(
+	rabbitmqAlivenessReqTimeMetric = prometheus.NewGauge(
 		prometheus.GaugeOpts{
 			Name: "rabbitmq_aliveness_req_time",
 			Help: "A metric with aliveness_req_time by aliveness_test request time",
 		},
-		[]string{"reqTime"},
 	)
 )
 
 type exporterAliveness struct {
 	alivenessMetrics map[string]*prometheus.GaugeVec
 	alivenessInfo    AlivenessInfo
-	alivenessReqTime AlivenessReqTime
 }
 
 type AlivenessInfo struct {
@@ -49,9 +47,6 @@ type AlivenessInfo struct {
 	Reason string
 }
 
-type AlivenessReqTime struct {
-	ReqTime string
-}
 
 func newExporterAliveness() Exporter {
 	alivenessGaugeVecActual := alivenessGaugeVec
@@ -67,7 +62,6 @@ func newExporterAliveness() Exporter {
 	return &exporterAliveness{
 		alivenessMetrics: alivenessGaugeVecActual,
 		alivenessInfo:    AlivenessInfo{},
-		alivenessReqTime: AlivenessReqTime{},
 	}
 }
 
@@ -94,11 +88,10 @@ func (e *exporterAliveness) Collect(ctx context.Context, ch chan<- prometheus.Me
 		return nil
 	}
 
-	var requestTime int64 = t2.Sub(t1).Milliseconds()
-	rabbitmqAlivenessReqTimeMetric.Reset()
+	var requestTime = t2.Sub(t1).Milliseconds()
 	// e.alivenessReqTime.ReqTime = strconv.FormatInt(requestTime,10)
 
-	rabbitmqAlivenessReqTimeMetric.WithLabelValues("").Set(float64(requestTime))
+	rabbitmqAlivenessReqTimeMetric.Set(float64(requestTime))
 
 	rabbitMqAlivenessData := reply.MakeMap()
 
